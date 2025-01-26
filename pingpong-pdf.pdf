@@ -71,6 +71,74 @@ endobj
 40 0 obj
   << >>
   stream
+    const PDF_WIDTH  = 612;
+    const PDF_HEIGHT = 792;
+    const gameWidth  = 400;
+    const gameHeight = 200;
+    const ballSize   = 10;
+
+    const TICK_INTERVAL = 50;
+    const GAME_STEP_TIME = 100;
+  
+
+    let timeMs = 0;
+    let lastUpdate = 0;
+    let interval = 0;
+    let ballX = PDF_WIDTH/2;
+    let ballY = PDF_HEIGHT/2 + gameHeight/2;
+    let xDir = 1;
+    let yDir = 1;
+
+    function setInterval(cb, ms) {
+    	const evalStr = "(" + cb.toString() + ")();";
+    	return app.setInterval(evalStr, ms);
+    }
+
+    function gameTick() {
+    	timeMs += TICK_INTERVAL;
+    	gameUpdate();
+    }
+
+    function gameUpdate() {
+      if (timeMs >= GAME_STEP_TIME + lastUpdate) {
+        moveBall(); 
+        lastUpdate = timeMs;
+    	}
+    }
+
+    function moveBall() {
+      handleCollision();
+      this.getField("Ball").hidden = true;
+      this.getField("Ball").rect = [
+        ballX, ballY, ballX + ballSize, ballY + ballSize
+      ];
+      this.getField("Ball").hidden = false; 
+    }
+
+    function handleCollision() {
+      ballY += ballSize * yDir;
+      ballX += ballSize * xDir;
+      if (ballY + ballSize >= PDF_HEIGHT/2 + gameHeight) {
+        yDir = -1;
+      } 
+      
+      if (ballX + ballSize >= PDF_WIDTH/2 + gameWidth/2) {
+        xDir = -1;
+      }
+
+      if (ballY <= PDF_HEIGHT/ 2) {
+        yDir = 1;
+      }
+
+      if (ballX <= PDF_WIDTH/2 - gameWidth/2) {
+        xDir = 1;
+      }
+
+    }
+
+
+    interval = setInterval(gameTick, TICK_INTERVAL);
+
     function foo() {
       app.alert("Button Clicked In a PDF!");
     }
@@ -96,10 +164,10 @@ endobj
   /Border [ 0 0 1 ]
   /P 3 0 R
   /Rect [
-    106 396 506 696 
+    106 396 506 596 
   ]
   /Subtype /Widget
-  /T (Rect_test1)
+  /T (Game_World)
   /Type /Annot
 >>
 endobj
@@ -119,10 +187,10 @@ endobj
   /Border [ 0 0 1 ]
   /P 3 0 R
   /Rect [
-    301 541 311 551 
+    306 496 316 506 
   ]
   /Subtype /Widget
-  /T (Rect_test2)
+  /T (Ball)
   /Type /Annot
 >>
 endobj

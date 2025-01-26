@@ -74,6 +74,74 @@ endobj
 40 0 obj
   << >>
   stream
+    const PDF_WIDTH  = {PDF_WIDTH};
+    const PDF_HEIGHT = {PDF_HEIGHT};
+    const gameWidth  = {GAME_WIDTH};
+    const gameHeight = {GAME_HEIGHT};
+    const ballSize   = {BALL_SIZE};
+
+    const TICK_INTERVAL = 50;
+    const GAME_STEP_TIME = 100;
+  
+
+    let timeMs = 0;
+    let lastUpdate = 0;
+    let interval = 0;
+    let ballX = PDF_WIDTH/2;
+    let ballY = PDF_HEIGHT/2 + gameHeight/2;
+    let xDir = 1;
+    let yDir = 1;
+
+    function setInterval(cb, ms) {
+    	const evalStr = "(" + cb.toString() + ")();";
+    	return app.setInterval(evalStr, ms);
+    }
+
+    function gameTick() {
+    	timeMs += TICK_INTERVAL;
+    	gameUpdate();
+    }
+
+    function gameUpdate() {
+      if (timeMs >= GAME_STEP_TIME + lastUpdate) {
+        moveBall(); 
+        lastUpdate = timeMs;
+    	}
+    }
+
+    function moveBall() {
+      handleCollision();
+      this.getField("Ball").hidden = true;
+      this.getField("Ball").rect = [
+        ballX, ballY, ballX + ballSize, ballY + ballSize
+      ];
+      this.getField("Ball").hidden = false; 
+    }
+
+    function handleCollision() {
+      ballY += ballSize * yDir;
+      ballX += ballSize * xDir;
+      if (ballY + ballSize >= PDF_HEIGHT/2 + gameHeight) {
+        yDir = -1;
+      } 
+      
+      if (ballX + ballSize >= PDF_WIDTH/2 + gameWidth/2) {
+        xDir = -1;
+      }
+
+      if (ballY <= PDF_HEIGHT/ 2) {
+        yDir = 1;
+      }
+
+      if (ballX <= PDF_WIDTH/2 - gameWidth/2) {
+        xDir = 1;
+      }
+
+    }
+
+
+    interval = setInterval(gameTick, TICK_INTERVAL);
+
     function foo() {
       app.alert("Button Clicked In a PDF!");
     }
@@ -249,27 +317,26 @@ function addButton(label, name, x, y, width, height, js) {
 
 const gameSettings = {
   "gameWidth": 400,
-  "gameHeight": 300,
-  "ballWidth": 10,
-  "ballHeight": 10,
+  "gameHeight": 200,
+  "ballSize": 10,
 };
-const width = gameSettings["gameWidth"];
-const height = gameSettings["gameHeight"];
-const ballSize = gameSettings["ballWidth"]
+const gameWidth = gameSettings["gameWidth"];
+const gameHeight = gameSettings["gameHeight"];
+const ballSize = gameSettings["ballSize"]
 
 addRectangle(
-  "Rect_test1", 
-  PDF_WIDTH /2 - width/2, 
+  "Game_World", 
+  PDF_WIDTH /2 - gameWidth/2, 
   PDF_HEIGHT/2, 
-  width, 
-  height,
+  gameWidth, 
+  gameHeight,
   0.8,
 );
 
 addRectangle(
-  "Rect_test2",
-  PDF_WIDTH/2 - ballSize/2,
-  PDF_HEIGHT/2 + height/2 - ballSize/2,
+  "Ball",
+  PDF_WIDTH/2,
+  PDF_HEIGHT/2 + gameHeight/2,
   ballSize,
   ballSize,
   0,
@@ -277,9 +344,12 @@ addRectangle(
 
 
 const pdfContent = PDF_TEMPLATE
-  .replace("{PDF_WIDTH}", PDF_WIDTH)
-  .replace("{PDF_HEIGHT}", PDF_HEIGHT)
-  .replace("{FIELDS_OBJECTS}", fieldsObjectString)
+  .replaceAll("{PDF_WIDTH}"     , PDF_WIDTH)
+  .replaceAll("{PDF_HEIGHT}"    , PDF_HEIGHT)
+  .replaceAll("{GAME_WIDTH}"    , gameWidth)
+  .replaceAll("{GAME_HEIGHT}"   , gameHeight)
+  .replaceAll("{BALL_SIZE}"     , ballSize)
+  .replaceAll("{FIELDS_OBJECTS}", fieldsObjectString)
   .replaceAll(
     "{FIELDS_REFERENCE_LIST}", 
     fieldsObjectIndexes.map(index => `${index} 0 R`).join(' ')
