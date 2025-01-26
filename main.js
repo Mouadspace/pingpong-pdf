@@ -31,7 +31,7 @@ endobj
   <<
     /Annots 20 0 R
     /Contents 4 0 R
-    /MediaBox [ 0 0 612 792 ]
+    /MediaBox [ 0 0 {PDF_WIDTH} {PDF_HEIGHT} ]
     /Parent 2 0 R
     /Resources <<
       /Font << /F1 5 0 R >>
@@ -94,6 +94,32 @@ trailer
 
 %%EOF
 `;
+
+const RECTANGLE_OBJECT = 
+`
+{OBJECT_REFERENCE} obj
+<<
+  /FT /Btn
+  /Ff 1
+  /MK <<
+    /BG [
+      {BG_COLOR} 
+    ]
+    /BC [
+      0 0 0
+    ]
+  >>
+  /Border [ 0 0 1 ]
+  /P 3 0 R
+  /Rect [
+    {RECTANGLE} 
+  ]
+  /Subtype /Widget
+  /T ({NAME})
+  /Type /Annot
+>>
+endobj
+`
 
 const STREAM_OBJECT = 
 `
@@ -175,6 +201,9 @@ const BUTTON_OBJECT =
 endobj
 `;
 
+const PDF_WIDTH = 612;
+const PDF_HEIGHT = 792;
+
 let fieldsObjectString  = "";
 let fieldsObjectIndexes = [];
 let objectIndexCounter  = 50;
@@ -184,6 +213,15 @@ function addObject(objectString) {
   fieldsObjectString += objectString;
   fieldsObjectIndexes.push(objectIndexCounter);
   objectIndexCounter += 1
+}
+
+function addRectangle(name, x, y, width, height, color) {
+  const rectangleObject = RECTANGLE_OBJECT
+    .replace("{OBJECT_REFERENCE}", `${objectIndexCounter} 0`)
+    .replace("{NAME}", name)
+    .replace("{BG_COLOR}", color)
+    .replace("{RECTANGLE}", `${x} ${y} ${x + width} ${y + height}`);
+  addObject(rectangleObject);
 }
 
 function addButton(label, name, x, y, width, height, js) {
@@ -209,17 +247,42 @@ function addButton(label, name, x, y, width, height, js) {
   
 }
 
+const gameSettings = {
+  "gameWidth": 400,
+  "gameHeight": 300,
+  "ballWidth": 10,
+  "ballHeight": 10,
+};
+const width = gameSettings["gameWidth"];
+const height = gameSettings["gameHeight"];
+const ballSize = gameSettings["ballWidth"]
 
-addButton("First Button", "B_test1", 100, 300, 150, 150, "foo();");
-addButton("Second Button", "B_test2", 300, 300, 150, 150, "foo();");
+addRectangle(
+  "Rect_test1", 
+  PDF_WIDTH /2 - width/2, 
+  PDF_HEIGHT/2, 
+  width, 
+  height,
+  0.8,
+);
 
+addRectangle(
+  "Rect_test2",
+  PDF_WIDTH/2 - ballSize/2,
+  PDF_HEIGHT/2 + height/2 - ballSize/2,
+  ballSize,
+  ballSize,
+  0,
+);
 
 
 const pdfContent = PDF_TEMPLATE
+  .replace("{PDF_WIDTH}", PDF_WIDTH)
+  .replace("{PDF_HEIGHT}", PDF_HEIGHT)
+  .replace("{FIELDS_OBJECTS}", fieldsObjectString)
   .replaceAll(
     "{FIELDS_REFERENCE_LIST}", 
     fieldsObjectIndexes.map(index => `${index} 0 R`).join(' ')
-  )
-  .replace("{FIELDS_OBJECTS}", fieldsObjectString);
+  );
 
 fs.writeFileSync('pingpong-pdf.pdf', pdfContent);
