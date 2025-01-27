@@ -79,18 +79,47 @@ endobj
     const gameWidth  = {GAME_WIDTH};
     const gameHeight = {GAME_HEIGHT};
     const ballSize   = {BALL_SIZE};
+    const barWidth   = {BAR_WIDTH};
+    const barHeight  = {BAR_HEIGHT};
+    const rightBarX  = {RIGHT_BAR_X};
+    const rightBarY  = {RIGHT_BAR_Y};
+    const leftBarX   = {LEFT_BAR_X};
+    const leftBarY   = {LEFT_BAR_Y};
 
     const TICK_INTERVAL = 50;
     const GAME_STEP_TIME = 100;
-  
+
 
     let timeMs = 0;
     let lastUpdate = 0;
     let interval = 0;
-    let ballX = PDF_WIDTH/2;
-    let ballY = PDF_HEIGHT/2 + gameHeight/2;
     let xDir = 1;
     let yDir = 1;
+  
+    const ball = {
+      x: PDF_WIDTH/2,
+      y: PDF_HEIGHT/2 + gameHeight/2,
+      width: ballSize,
+      height: ballSize,
+      speed: ballSize,
+    };
+
+    const userBar = {
+      x: rightBarX,
+      y: rightBarY,
+      width: barWidth,
+      height: barHeight,
+      score: 0,
+    };
+
+    const computerBar = {
+      x: leftBarX,
+      y: leftBarY,
+      width: barWidth,
+      height: barHeight,
+      score: 0,
+    };
+
 
     function setInterval(cb, ms) {
     	const evalStr = "(" + cb.toString() + ")();";
@@ -111,39 +140,129 @@ endobj
 
     function moveBall() {
       handleCollision();
+      redraw(); 
+    }
+
+    function redraw() {
       this.getField("Ball").hidden = true;
       this.getField("Ball").rect = [
-        ballX, ballY, ballX + ballSize, ballY + ballSize
+        ball.x, ball.y, ball.x + ball.width, ball.y + ball.width
       ];
-      this.getField("Ball").hidden = false; 
+      this.getField("Ball").hidden = false;
+
+      this.getField("Right_bar").hidden = true;
+      this.getField("Right_bar").rect = [
+        userBar.x, userBar.y, userBar.x + userBar.width, userBar.y + userBar.height,
+      ];
+      this.getField("Right_bar").hidden = false;
+
+      this.getField("Left_bar").hidden = true;
+      this.getField("Left_bar").rect = [
+        computerBar.x, computerBar.y, computerBar.x + computerBar.width, computerBar.y + computerBar.height,
+      ];
+      this.getField("Left_bar").hidden = false;
     }
 
     function handleCollision() {
-      ballY += ballSize * yDir;
-      ballX += ballSize * xDir;
-      if (ballY + ballSize >= PDF_HEIGHT/2 + gameHeight) {
-        yDir = -1;
+
+      if (
+        ball.y <= PDF_HEIGHT/ 2 || 
+        ball.y + ball.width >= PDF_HEIGHT/2 + gameHeight
+      ) {
+        yDir = -1 * yDir;
       } 
+
+      if (ball.x + ball.width >= PDF_WIDTH/2 + gameWidth/2) {
+        computerBar.score += 1;
+        this.getField("Left_score").value = computerBar.score;
+        resetBall(); 
+
+      } else if (ball.x <= PDF_WIDTH/2 - gameWidth/2) {
+        userBar.score += 1;
+        this.getField("Right_score").value = userBar.score;
+        resetBall();
+      }
+
+     
+      if (isCollision(userBar, ball)) {
+        if (ball.x + ball.width == userBar.x) {
+          xDir = -1 * xDir; 
+        } else if (
+            ball.y == userBar.y + userBar.height || 
+            ball.y + ball.height == userBar.y
+          ) {
+          yDir = -1 * yDir;
+        }
+
+      } else if (isCollision(computerBar, ball)) {
+        if (ball.x == computerBar.x + computerBar.width) {
+          xDir = -1 * xDir; 
+        } else if (
+          ball.y == computerBar.y + computerBar.height ||
+          ball.y + ball.height == computerBar.y
+        ) {
+          yDir = -1 * yDir;
+        }
+      }
+
       
-      if (ballX + ballSize >= PDF_WIDTH/2 + gameWidth/2) {
-        xDir = -1;
-      }
-
-      if (ballY <= PDF_HEIGHT/ 2) {
-        yDir = 1;
-      }
-
-      if (ballX <= PDF_WIDTH/2 - gameWidth/2) {
-        xDir = 1;
-      }
-
+      ball.x += ball.speed * xDir;
+      ball.y += ball.speed * yDir;
     }
 
+    function isCollision(shape1, shape2) {
+      return (shape1.x + shape1.width >= shape2.x 
+        && shape1.x <= shape2.x + shape2.width
+        && shape1.y <= shape2.y + shape2.height 
+        && shape1.y + shape1.height >= shape2.y
+      );
+    }
+
+    function resetBall() {
+      ball.x = PDF_WIDTH/2;
+      ball.y = PDF_HEIGHT/2 + gameHeight/2;
+      const randDir = Math.random() < 0.5 ? -1 : 1;
+      xDir = -1 * xDir;
+      yDir = randDir * yDir; 
+    }
+
+    function handleInput(event) {
+    	switch (event.change) {
+    		case 'w': userBarUp(); break;
+    		case 's': userBarDown(); break;
+    		case 'a': computerBarUp(); break;
+    		case 'd': computerBarDown(); break;
+    	}
+    }
+
+    function userBarUp() {
+      if (userBar.y + userBar.height < PDF_HEIGHT/2 + gameHeight) {
+        userBar.y += ball.width;
+      } 
+    }
+
+    function computerBarUp() {
+      if (computerBar.y + computerBar.height < PDF_HEIGHT/2 + gameHeight) {
+        computerBar.y += ball.width;
+      } 
+    }
+    
+    function userBarDown() {
+      if (userBar.y > PDF_HEIGHT/2) {
+        userBar.y -= ball.width;
+      }
+    }
+ 
+    function computerBarDown() {
+      if (computerBar.y > PDF_HEIGHT/2) {
+        computerBar.y -= ball.width;
+      }
+    }
 
     interval = setInterval(gameTick, TICK_INTERVAL);
 
-    function foo() {
-      app.alert("Button Clicked In a PDF!");
+    function alert(message) {
+      app.alert(message);
     }
   endstream
 endobj
@@ -269,6 +388,34 @@ const BUTTON_OBJECT =
 endobj
 `;
 
+const TEXT_FEILD_OBJECT = 
+`
+{OBJECT_REFERENCE} obj
+<<
+	/AA <<
+		/K <<
+			/JS {SCRIPT_REFERENCE}
+			/S /JavaScript
+		>>
+	>>
+	/F 4
+	/FT /Tx
+	/MK <<
+	>>
+	/MaxLen 0
+	/P 16 0 R
+	/Rect [
+	  {RECTANGLE}	
+	]
+	/Subtype /Widget
+	/T ({NAME})
+	/V ({LABEL})
+	/Type /Annot
+>>
+endobj
+`;
+
+
 const PDF_WIDTH = 612;
 const PDF_HEIGHT = 792;
 
@@ -315,14 +462,36 @@ function addButton(label, name, x, y, width, height, js) {
   
 }
 
+function addTextFeild(label, name, x, y, width, height, js) {
+  const scriptObject = STREAM_OBJECT
+    .replace("{OBJECT_REFERENCE}", `${objectIndexCounter} 0`)  
+    .replace("{CONTENT}", js);  
+  addObject(scriptObject);
+  
+  const text = TEXT_FEILD_OBJECT
+    .replace("{NAME}", name)
+    .replace("{LABEL}", label)
+    .replace("{OBJECT_REFERENCE}", `${objectIndexCounter} 0`)
+    .replace("{SCRIPT_REFERENCE}", `${objectIndexCounter - 1} 0 R`)
+    .replace("{RECTANGLE}", `${x} ${y} ${x + width} ${y + height}`);
+  addObject(text);
+}
+
+
 const gameSettings = {
   "gameWidth": 400,
   "gameHeight": 200,
   "ballSize": 10,
+  "barWidth": 10,
+  "barHeight": 40,
+  "barPadding": 30,
 };
 const gameWidth = gameSettings["gameWidth"];
 const gameHeight = gameSettings["gameHeight"];
-const ballSize = gameSettings["ballSize"]
+const ballSize = gameSettings["ballSize"];
+const barWidth = gameSettings["barWidth"];
+const barHeight = gameSettings["barHeight"];
+const barPadding = gameSettings["barPadding"];
 
 addRectangle(
   "Game_World", 
@@ -342,6 +511,58 @@ addRectangle(
   0,
 );
 
+const rightBarX = PDF_WIDTH/2 + gameWidth/2 - barPadding; 
+const rightBarY = PDF_HEIGHT/2 + gameHeight/2 - barHeight/2; 
+addRectangle(
+  "Right_bar",
+  rightBarX,
+  rightBarY,
+  barWidth,
+  barHeight,
+  0,
+);
+
+const leftBarX = PDF_WIDTH/2 - gameWidth/2 + barPadding; 
+const leftBarY = PDF_HEIGHT/2 + gameHeight/2 - barHeight/2; 
+addRectangle(
+  "Left_bar",
+  leftBarX,
+  leftBarY,
+  barWidth,
+  barHeight,
+  0,
+);
+
+addTextFeild(
+  "Type here for keyboard controls (WA)",
+  "T_input", 
+  PDF_WIDTH/2 - gameWidth/2, 
+  PDF_HEIGHT/2 - gameHeight/2, 
+  gameWidth, 
+  50, 
+  "handleInput(event);"
+);
+
+addTextFeild(
+  "0",
+  "Right_score",
+  5 * PDF_WIDTH/8,
+  PDF_HEIGHT/2 + gameHeight + 40,
+  50,
+  50,
+  ""
+);
+
+addTextFeild(
+  "0",
+  "Left_score",
+  PDF_WIDTH/4 ,
+  PDF_HEIGHT/2 + gameHeight + 40,
+  50,
+  50,
+  ""
+);
+
 
 const pdfContent = PDF_TEMPLATE
   .replaceAll("{PDF_WIDTH}"     , PDF_WIDTH)
@@ -349,6 +570,12 @@ const pdfContent = PDF_TEMPLATE
   .replaceAll("{GAME_WIDTH}"    , gameWidth)
   .replaceAll("{GAME_HEIGHT}"   , gameHeight)
   .replaceAll("{BALL_SIZE}"     , ballSize)
+  .replaceAll("{BAR_WIDTH}"     , barWidth)
+  .replaceAll("{BAR_HEIGHT}"    , barHeight)
+  .replaceAll("{RIGHT_BAR_X}"   , rightBarX)
+  .replaceAll("{RIGHT_BAR_Y}"   , rightBarY)
+  .replaceAll("{LEFT_BAR_X}"    , leftBarX)
+  .replaceAll("{LEFT_BAR_Y}"    , leftBarY)
   .replaceAll("{FIELDS_OBJECTS}", fieldsObjectString)
   .replaceAll(
     "{FIELDS_REFERENCE_LIST}", 
