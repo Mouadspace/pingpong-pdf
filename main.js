@@ -88,6 +88,7 @@ endobj
 
     const TICK_INTERVAL = 50;
     const GAME_STEP_TIME = 100;
+    const DIFFICULTY = 0.1;
 
 
     let timeMs = 0;
@@ -208,6 +209,7 @@ endobj
       
       ball.x += ball.speed * xDir;
       ball.y += ball.speed * yDir;
+      moveComputerBar();
     }
 
     function isCollision(shape1, shape2) {
@@ -230,8 +232,8 @@ endobj
     	switch (event.change) {
     		case 'w': userBarUp(); break;
     		case 's': userBarDown(); break;
-    		case 'a': computerBarUp(); break;
-    		case 'd': computerBarDown(); break;
+    		// case 'a': computerBarUp(); break;
+    		// case 'd': computerBarDown(); break;
     	}
     }
 
@@ -256,6 +258,15 @@ endobj
     function computerBarDown() {
       if (computerBar.y > PDF_HEIGHT/2) {
         computerBar.y -= ball.width;
+      }
+    }
+
+    function moveComputerBar() {
+      const nextLocation = computerBar.y + ((ball.y - (computerBar.y + computerBar.height/ 2))) * DIFFICULTY;
+      if (nextLocation > PDF_HEIGHT/2 &&  
+         nextLocation + computerBar.height < PDF_HEIGHT/2 + gameHeight
+      ) {
+        computerBar.y = nextLocation;
       }
     }
 
