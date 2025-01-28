@@ -6,7 +6,7 @@
     /Pages 2 0 R
     /OpenAction 30 0 R
     /AcroForm <<
-      /Fields [ 50 0 R 51 0 R 52 0 R 53 0 R 54 0 R 55 0 R 56 0 R 57 0 R 58 0 R 59 0 R ]
+      /Fields [ 50 0 R 51 0 R 52 0 R 53 0 R 54 0 R 55 0 R 56 0 R 57 0 R 58 0 R 59 0 R 60 0 R 61 0 R 62 0 R 63 0 R 64 0 R 65 0 R 66 0 R 67 0 R 68 0 R ]
     >>
     /Type /Catalog
   >>
@@ -41,6 +41,11 @@ endobj
 4 0 obj
   << >>
   stream
+  BT
+    /F1 28 Tf
+    200 720 Td
+    (Ping Pong Pdf) Tj
+    ET
   endstream
 endobj
 
@@ -56,7 +61,7 @@ endobj
 
 
 20 0 obj
-  [ 50 0 R 51 0 R 52 0 R 53 0 R 54 0 R 55 0 R 56 0 R 57 0 R 58 0 R 59 0 R ]
+  [ 50 0 R 51 0 R 52 0 R 53 0 R 54 0 R 55 0 R 56 0 R 57 0 R 58 0 R 59 0 R 60 0 R 61 0 R 62 0 R 63 0 R 64 0 R 65 0 R 66 0 R 67 0 R 68 0 R ]
 endobj
 
 
@@ -267,7 +272,11 @@ endobj
       }
     }
 
-    interval = setInterval(gameTick, TICK_INTERVAL);
+
+    function initGame() {
+      interval = setInterval(gameTick, TICK_INTERVAL);
+      this.getField("B_start_game").hidden = true;
+    }
 
     function alert(message) {
       app.alert(message);
@@ -285,7 +294,7 @@ endobj
   /Ff 1
   /MK <<
     /BG [
-      0.8 
+      0.9 
     ]
     /BC [
       0 0 0
@@ -393,7 +402,7 @@ endobj
 	/MaxLen 0
 	/P 16 0 R
 	/Rect [
-	  106 296 506 346	
+	  106 256 506 306	
 	]
 	/Subtype /Widget
 	/T (T_input)
@@ -405,15 +414,228 @@ endobj
 56 0 obj
   << >>
   stream
-    
+    userBarUp();
   endstream
   endobj
 
 57 0 obj
+  <<
+    /BBox [ 0.0 0.0 40 40 ]
+    /FormType 1
+    /Resources <<
+      /Font <<
+        /HeBo 10 0 R
+      >>
+      /ProcSet [ /PDF /Text ]
+    >>
+    /Subtype /Form
+    /Type /XObject
+  >>
+  stream
+    q
+    0.75 g
+    0 0 300 500 re
+    f
+    Q
+    q
+    1 1 300 500 re
+    W
+    n
+    BT
+      /HeBo 12 Tf
+      0 g
+      10 8 Td
+      (up) Tj
+      ET
+    Q
+  endstream
+endobj
+
+58 0 obj
+<<
+  /A <<
+	  /JS 56 0 R  
+	  /S /JavaScript
+	>>
+  /AP <<
+    /N 57 0 R
+  >>
+  /F 4
+  /FT /Btn
+  /Ff 65536
+  /MK <<
+    /BG [
+      0.8
+    ]
+    /BC [
+      0 0 0
+    ]
+  >>
+  /Border [ 0 0 1 ]
+  /P 3 0 R
+  /Rect [
+    466 336 506 376 
+  ]
+  /Subtype /Widget
+  /T (B_up)
+  /Type /Annot
+>>
+endobj
+
+59 0 obj
+  << >>
+  stream
+    userBarDown();
+  endstream
+  endobj
+
+60 0 obj
+  <<
+    /BBox [ 0.0 0.0 40 40 ]
+    /FormType 1
+    /Resources <<
+      /Font <<
+        /HeBo 10 0 R
+      >>
+      /ProcSet [ /PDF /Text ]
+    >>
+    /Subtype /Form
+    /Type /XObject
+  >>
+  stream
+    q
+    0.75 g
+    0 0 300 500 re
+    f
+    Q
+    q
+    1 1 300 500 re
+    W
+    n
+    BT
+      /HeBo 12 Tf
+      0 g
+      10 8 Td
+      (down) Tj
+      ET
+    Q
+  endstream
+endobj
+
+61 0 obj
+<<
+  /A <<
+	  /JS 59 0 R  
+	  /S /JavaScript
+	>>
+  /AP <<
+    /N 60 0 R
+  >>
+  /F 4
+  /FT /Btn
+  /Ff 65536
+  /MK <<
+    /BG [
+      0.8
+    ]
+    /BC [
+      0 0 0
+    ]
+  >>
+  /Border [ 0 0 1 ]
+  /P 3 0 R
+  /Rect [
+    406 336 446 376 
+  ]
+  /Subtype /Widget
+  /T (B_down)
+  /Type /Annot
+>>
+endobj
+
+62 0 obj
+  << >>
+  stream
+    initGame();
+  endstream
+  endobj
+
+63 0 obj
+  <<
+    /BBox [ 0.0 0.0 100 80 ]
+    /FormType 1
+    /Resources <<
+      /Font <<
+        /HeBo 10 0 R
+      >>
+      /ProcSet [ /PDF /Text ]
+    >>
+    /Subtype /Form
+    /Type /XObject
+  >>
+  stream
+    q
+    0.75 g
+    0 0 300 500 re
+    f
+    Q
+    q
+    1 1 300 500 re
+    W
+    n
+    BT
+      /HeBo 12 Tf
+      0 g
+      10 8 Td
+      (START GAME) Tj
+      ET
+    Q
+  endstream
+endobj
+
+64 0 obj
+<<
+  /A <<
+	  /JS 62 0 R  
+	  /S /JavaScript
+	>>
+  /AP <<
+    /N 63 0 R
+  >>
+  /F 4
+  /FT /Btn
+  /Ff 65536
+  /MK <<
+    /BG [
+      0.8
+    ]
+    /BC [
+      0 0 0
+    ]
+  >>
+  /Border [ 0 0 1 ]
+  /P 3 0 R
+  /Rect [
+    256 456 356 536 
+  ]
+  /Subtype /Widget
+  /T (B_start_game)
+  /Type /Annot
+>>
+endobj
+
+65 0 obj
+  << >>
+  stream
+    
+  endstream
+  endobj
+
+66 0 obj
 <<
 	/AA <<
 		/K <<
-			/JS 56 0 R
+			/JS 65 0 R
 			/S /JavaScript
 		>>
 	>>
@@ -433,18 +655,18 @@ endobj
 >>
 endobj
 
-58 0 obj
+67 0 obj
   << >>
   stream
     
   endstream
   endobj
 
-59 0 obj
+68 0 obj
 <<
 	/AA <<
 		/K <<
-			/JS 58 0 R
+			/JS 67 0 R
 			/S /JavaScript
 		>>
 	>>

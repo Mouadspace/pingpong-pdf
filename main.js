@@ -44,6 +44,11 @@ endobj
 4 0 obj
   << >>
   stream
+  BT
+    /F1 28 Tf
+    200 720 Td
+    (Ping Pong Pdf) Tj
+    ET
   endstream
 endobj
 
@@ -270,7 +275,11 @@ endobj
       }
     }
 
-    interval = setInterval(gameTick, TICK_INTERVAL);
+
+    function initGame() {
+      interval = setInterval(gameTick, TICK_INTERVAL);
+      this.getField("B_start_game").hidden = true;
+    }
 
     function alert(message) {
       app.alert(message);
@@ -462,7 +471,7 @@ function addButton(label, name, x, y, width, height, js) {
     .replace("{HEIGHT}", height)
     .replace("{LABEL}", label);
   addObject(buttonLabelObject);
-
+  
   const button = BUTTON_OBJECT
     .replace("{NAME}", name)
     .replace("{OBJECT_REFERENCE}", `${objectIndexCounter} 0`)
@@ -510,7 +519,7 @@ addRectangle(
   PDF_HEIGHT/2, 
   gameWidth, 
   gameHeight,
-  0.8,
+  0.9,
 );
 
 addRectangle(
@@ -548,11 +557,43 @@ addTextFeild(
   "Type here for keyboard controls (WA)",
   "T_input", 
   PDF_WIDTH/2 - gameWidth/2, 
-  PDF_HEIGHT/2 - gameHeight/2, 
+  PDF_HEIGHT/2 - gameHeight/2 - 40, 
   gameWidth, 
   50, 
   "handleInput(event);"
 );
+
+addButton(
+  "up",
+  "B_up",
+  PDF_WIDTH/2 + gameWidth/2 - 40,
+  PDF_HEIGHT/2 - 60,
+  40,
+  40,
+  "userBarUp();"
+);
+
+addButton(
+  "down",
+  "B_down",
+  PDF_WIDTH/2 + gameWidth/2 - 100,
+  PDF_HEIGHT/2 - 60,
+  40,
+  40,
+  "userBarDown();"
+);
+
+addButton(
+  "START GAME",
+  "B_start_game",
+  PDF_WIDTH/2 - 100/2,
+  PDF_HEIGHT/2 + gameHeight/2 - 80/2,
+  100,
+  80,
+  "initGame();",
+);
+
+
 
 addTextFeild(
   "0",
